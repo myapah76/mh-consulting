@@ -15,11 +15,14 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 h-28 flex items-center justify-between">
 
         {/* Left: Logo */}
-        <Link to="/" className="flex items-center group h-full">
+        <Link
+          to="/"
+          className="inline-flex h-20 w-64 items-center overflow-hidden"
+        >
           <img
             src="/logo.jpg"
-            alt="MH CONSULTING - STRATEGIC - TRUSTED - GROWTH"
-            className="h-28 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+            alt="MH Consulting - Strategic, Trusted, Growth"
+            className="w-full scale-100 object-contain"
           />
         </Link>
 

@@ -3,7 +3,6 @@ import LucideIcon from '../components/LucideIcon';
 import ConsultationForm from '../components/ConsultationForm';
 import TestimonialCarousel from '../components/TestimonialCarousel';
 import KnowledgeCarousel from '../components/KnowledgeCarousel';
-import { servicesData } from '../data';
 
 interface HomeProps {
   onOpenConsultation: () => void;
@@ -30,7 +29,7 @@ export default function Home({ onOpenConsultation }: HomeProps) {
     },
     {
       categoryName: 'THUẾ',
-      title: 'Báo Cáo & Quyết Toán Thuế',
+      title: 'Báo Cáo Thuế Định Kỳ',
       shortDesc: 'Đại diện rà soát hồ sơ khai báo thuế GTGT, TNCN, lập báo cáo tài chính cuối năm và đại diện giải trình thanh tra thuế.',
       icon: 'BarChart2',
       slug: 'bao-cao-thue-dinh-ky-hang-thang-quy',
@@ -64,7 +63,7 @@ export default function Home({ onOpenConsultation }: HomeProps) {
                 Cùng <span className="text-[#d40000]">MH CONSULTING</span>
               </h1>
               <p className="text-gray-700 text-sm md:text-base leading-relaxed max-w-2xl font-medium">
-                Chúng tôi cung cấp dịch vụ <strong className="text-[#d40000]">Thành lập doanh nghiệp</strong>, <strong className="text-gray-900">Kế toán trọn gói</strong> và <strong className="text-gray-900">Quyết toán thuế</strong> chuẩn mực, giúp tiết kiệm đến <strong className="text-[#d40000]">90% thời gian</strong> và <strong className="text-gray-900">tối ưu hóa chi phí hợp pháp</strong> cho doanh nghiệp của bạn hoạt động an toàn.
+                Chúng tôi cung cấp dịch vụ <strong className="text-[#d40000]">Thành lập doanh nghiệp</strong>, <strong className="text-gray-900">Kế toán trọn gói</strong> và <strong className="text-gray-900">Báo cáo thuế định kỳ</strong> chuẩn mực, giúp tiết kiệm đến <strong className="text-[#d40000]">90% thời gian</strong> và <strong className="text-gray-900">tối ưu hóa chi phí hợp pháp</strong> cho doanh nghiệp của bạn hoạt động an toàn.
               </p>
               
               <div className="pt-4 max-w-xl mx-auto lg:mx-0">

@@ -171,58 +171,6 @@ export const servicesData: ServiceItem[] = [
     ]
   },
   {
-    id: 'quyet-toan-thue',
-    slug: 'quyet-toan-thue-tndn-tncn',
-    title: 'Quyết Toán Thuế TNCN & TNDN',
-    category: 'thue',
-    shortDesc: 'Đại diện rà soát hồ sơ, lập tờ khai quyết toán thuế năm và đại diện giải trình trực tiếp với cơ quan quản lý thuế.',
-    icon: 'ShieldAlert',
-    fullContent: 'Quyết toán thuế năm là khâu quan trọng bậc nhất của chu kỳ kế toán, quyết định số tiền thuế thực tế mà doanh nghiệp và cá nhân phải nộp thêm hoặc hoàn trả. MH CONSULTING cung cấp gói quyết toán chuyên sâu với mức độ tin cậy tuyệt đối, đại diện bảo vệ quyền lợi hợp pháp của khách hàng trước đoàn thanh tra thuế.',
-    detailedPoints: [
-      'Rà soát chi phí lương, phụ cấp, bảo hiểm để quyết toán thuế Thu nhập cá nhân chuẩn xác.',
-      'Loại bỏ các khoản chi phí không hợp lệ trước khi xác định thu nhập chịu thuế TNDN.',
-      'Lập tờ khai quyết toán thuế thu nhập doanh nghiệp (mẫu 03/TNDN) và tờ khai quyết toán thuế thu nhập cá nhân (mẫu 05/KK-TNCN).',
-      'Đại diện làm việc, giải trình trực tiếp với cơ quan thuế khi có yêu cầu thanh tra kiểm tra.'
-    ],
-    benefits: [
-      'Đội ngũ chuyên gia thuế có hơn 10 năm kinh nghiệm giải trình với hàng trăm cơ quan thuế khác nhau.',
-      'Tối ưu hóa số thuế phải nộp thông qua việc tận dụng triệt độ chính sách miễn, giảm thuế hiện hành.',
-      'Yên tâm sản xuất kinh doanh mà không lo sợ rủi ro phạt thuế nặng nề.'
-    ],
-    processSteps: [
-      'Thu thập dữ liệu kế toán và tờ khai 4 quý trong năm tài chính.',
-      'Đối soát số liệu, thực hiện điều chỉnh định khoản kế toán cần thiết.',
-      'Lập và ký nộp bộ hồ sơ quyết toán thuế chính thức trước ngày 31/03 năm sau.',
-      'Chuẩn bị sẵn tài liệu chứng minh và đồng hành cùng doanh nghiệp giải trình thực tế.'
-    ]
-  },
-  {
-    id: 'hoan-thue-vat',
-    slug: 'hoan-thue-gia-tri-gia-tang-vat',
-    title: 'Hoàn Thuế Giá Trị Gia Tăng (VAT)',
-    category: 'thue',
-    shortDesc: 'Hỗ trợ doanh nghiệp xuất khẩu, doanh nghiệp có dự án đầu tư mới thực hiện quy trình hoàn thuế VAT từ ngân sách nhà nước.',
-    icon: 'Percent',
-    fullContent: 'Hoàn thuế VAT là một quy trình kiểm tra cực kỳ khắt khe của cơ quan thuế đòi hỏi sổ sách, hóa đơn chứng từ chứng minh nguồn gốc rõ ràng, minh bạch 100%. MH CONSULTING tự hào có tỷ lệ hoàn thuế thành công rất cao nhờ quy trình thẩm định kỹ lưỡng hồ sơ trước khi nộp.',
-    detailedPoints: [
-      'Đánh giá điều kiện hoàn thuế đối với dự án đầu tư hoặc hoạt động xuất khẩu của doanh nghiệp.',
-      'Kiểm tra tính hợp pháp của hóa đơn GTGT mua vào đầu vào và các điều kiện thanh toán không dùng tiền mặt qua ngân hàng.',
-      'Soạn hồ sơ hoàn thuế GTGT đúng mẫu quy định gửi cơ quan quản lý thuế.',
-      'Đồng hành cùng doanh nghiệp đón tiếp đoàn kiểm tra thuế tại trụ sở để xác minh điều kiện hoàn thuế.'
-    ],
-    benefits: [
-      'Giải phóng dòng vốn ứ đọng lớn cho doanh nghiệp phục vụ tái đầu tư.',
-      'Hạn chế rủi ro hồ sơ bị bác bỏ hoặc bị chuyển sang diện kiểm tra trước hoàn sau gây kéo dài thời gian.',
-      'Phí dịch vụ được tính linh hoạt chỉ khi doanh nghiệp nhận được quyết định hoàn tiền thành công.'
-    ],
-    processSteps: [
-      'Khảo sát chi tiết hồ sơ chứng từ của dự án hoặc lô hàng xuất khẩu.',
-      'Rà soát lỗi, chuẩn bị các chứng từ thanh toán không dùng tiền mặt tương ứng.',
-      'Nộp đơn xin hoàn thuế và theo dõi phản hồi từ cơ quan thuế.',
-      'Giải trình dữ liệu thực tế và nhận quyết định hoàn trả tiền thuế từ Kho bạc Nhà nước.'
-    ]
-  },
-  {
     id: 'bao-hiem-xa-hoi',
     slug: 'dich-vu-bao-hiem-xa-hoi-lao-dong',
     title: 'Bảo Hiểm Xã Hội & Lao Động',
@@ -284,14 +232,6 @@ export const testimonialsData: Testimonial[] = [
     company: 'Công Ty TNHH Xuất Nhập Khẩu Thăng Long',
     comment: 'Tôi cực kỳ hài lòng với dịch vụ kế toán trọn gói của MH CONSULTING. Các bạn làm việc rất chuyên nghiệp, cẩn thận trong việc đối soát hóa đơn và luôn cảnh báo sớm các rủi ro về thuế. Nhờ có các bạn, tôi hoàn toàn yên tâm tập trung vào hoạt động kinh doanh chính.',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&q=80'
-  },
-  {
-    id: '2',
-    name: 'Trần Thị Mai',
-    role: 'Kế Toán Trưởng',
-    company: 'Tập Đoàn Logistics Thái Bình Dương',
-    comment: 'Quyết toán thuế luôn là nỗi lo lớn của doanh nghiệp chúng tôi hàng năm. Nhưng từ khi hợp tác với MH CONSULTING, đội ngũ chuyên gia của các bạn đã xử lý sổ sách vô cùng hoàn hảo, giải trình chặt chẽ trước cơ quan thuế. Tỷ lệ hoàn thuế VAT của chúng tôi đạt 100% đúng tiến độ.',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&q=80'
   },
   {
     id: '3',
@@ -428,7 +368,6 @@ export const footerLinks = {
       { label: 'Dịch vụ kế toán trọn gói', path: '/dich-vu/dich-vu-ke-toan-tron-goi' },
       { label: 'Làm sổ sách & dọn dẹp kế toán', path: '/dich-vu/lam-so-sach-ke-toan-va-don-dep' },
       { label: 'Báo cáo thuế định kỳ hàng tháng/quý', path: '/dich-vu/bao-cao-thue-dinh-ky-hang-thang-quy' },
-      { label: 'Quyết toán thuế TNDN & TNCN', path: '/dich-vu/quyet-toan-thue-tndn-tncn' },
       { label: 'Dịch vụ bảo hiểm xã hội lao động', path: '/dich-vu/dich-vu-bao-hiem-xa-hoi-lao-dong' },
     ]
   },

@@ -14,7 +14,7 @@ export default function DichVu({ onOpenConsultation }: DichVuProps) {
     { id: 'all', name: 'TẤT CẢ DỊCH VỤ', icon: 'Briefcase' },
     { id: 'thanh-lap', name: 'THÀNH LẬP', icon: 'Edit3' },
     { id: 'ke-toan', name: 'KẾ TOÁN', icon: 'Calculator' },
-    { id: 'thue', name: 'THUẾ & QUYẾT TOÁN', icon: 'BarChart2' },
+    { id: 'thue', name: 'THUẾ', icon: 'BarChart2' },
     { id: 'khac', name: 'DỊCH VỤ KHÁC', icon: 'HeartHandshake' },
   ];
 
@@ -37,7 +37,7 @@ export default function DichVu({ onOpenConsultation }: DichVuProps) {
             DANH MỤC DỊCH VỤ PHÁP LÝ & THUẾ
           </h1>
           <p className="text-gray-400 text-xs md:text-sm max-w-xl mx-auto font-medium">
-            Cung cấp giải pháp trọn gói, chuẩn nghiệp vụ, chính xác tuyệt đối từ thành lập đến quyết toán thuế.
+            Cung cấp giải pháp trọn gói, chuẩn nghiệp vụ, chính xác tuyệt đối từ thành lập đến kê khai thuế định kỳ.
           </p>
         </div>
       </section>

@@ -11,11 +11,14 @@ export default function Footer() {
 
           {/* Column 1: Brand & Contact Info */}
           <div className="space-y-6">
-            <Link to="/" className="inline-flex items-center">
+            <Link
+              to="/"
+              className="inline-flex h-20 w-64 items-center overflow-hidden"
+            >
               <img
                 src="/logo.jpg"
                 alt="MH Consulting - Strategic, Trusted, Growth"
-                className="h-28 w-auto object-contain"
+                className="w-full scale-100 object-contain"
               />
             </Link>
 
