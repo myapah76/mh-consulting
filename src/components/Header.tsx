@@ -17,7 +17,7 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
         {/* Left: Logo */}
         <Link to="/" className="flex items-center group h-full">
           <img
-            src="public/logo.jpg"
+            src="/logo.jpg"
             alt="MH CONSULTING - STRATEGIC - TRUSTED - GROWTH"
             className="h-28 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
           />

@@ -13,7 +13,7 @@ export default function Footer() {
           <div className="space-y-6">
             <Link to="/" className="inline-flex items-center">
               <img
-                src="public/logo.jpg"
+                src="/logo.jpg"
                 alt="MH Consulting - Strategic, Trusted, Growth"
                 className="h-28 w-auto object-contain"
               />
