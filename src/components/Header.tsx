@@ -17,9 +17,9 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
         {/* Left: Logo */}
         <Link to="/" className="flex items-center group h-full">
           <img
-            src="/logo.jpg"
-            alt="MH Consulting - Strategic, Trusted, Growth"
-            className="h-16 w-auto object-contain"
+            src="public/logo.jpg"
+            alt="MH CONSULTING - STRATEGIC - TRUSTED - GROWTH"
+            className="h-28 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
           />
         </Link>
 
@@ -77,13 +77,6 @@ export default function Header({ onOpenConsultation }: HeaderProps) {
           }`}
       >
         <div className="px-4 py-6 space-y-4 max-h-[calc(100vh-7rem)] overflow-y-auto">
-          <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex justify-center pb-4 border-b border-gray-100">
-            <img
-              src="/logo.jpg"
-              alt="MH Consulting - Strategic, Trusted, Growth"
-              className="h-16 w-auto object-contain"
-            />
-          </Link>
           {navigationItems.map((item) => (
             <NavLink
               key={item.path}
