@@ -22,7 +22,9 @@ import {
   Quote,
   Calendar,
   MessageCircle,
-  ArrowUp
+  ArrowUp,
+  FolderTree,
+  MessagesSquare
 } from 'lucide-react';
 
 const iconMap = {
@@ -49,7 +51,9 @@ const iconMap = {
   Quote,
   Calendar,
   MessageCircle,
-  ArrowUp
+  ArrowUp,
+  FolderTree,
+  MessagesSquare
 };
 
 export type IconName = keyof typeof iconMap;

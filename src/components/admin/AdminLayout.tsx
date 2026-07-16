@@ -42,9 +42,12 @@ export default function AdminLayout() {
       </header>
       <div className="mx-auto flex max-w-[1440px]">
         <aside className={`${menuOpen ? 'block' : 'hidden'} fixed inset-x-0 top-16 z-30 border-b border-gray-200 bg-white p-4 shadow-lg lg:sticky lg:top-16 lg:block lg:h-[calc(100vh-4rem)] lg:w-64 lg:shrink-0 lg:border-b-0 lg:border-r lg:shadow-none`}>
-          <nav>
+          <nav className="space-y-1">
             <NavLink to="/admin/services" onClick={() => setMenuOpen(false)} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold ${isActive ? 'bg-[#d40000] text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
               <LucideIcon name="Briefcase" size={18} /> Quản lý dịch vụ
+            </NavLink>
+            <NavLink to="/admin/categories" onClick={() => setMenuOpen(false)} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold ${isActive ? 'bg-[#d40000] text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
+              <LucideIcon name="FolderTree" size={18} /> Quản lý danh mục
             </NavLink>
           </nav>
         </aside>

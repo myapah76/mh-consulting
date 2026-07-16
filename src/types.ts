@@ -132,6 +132,32 @@ export type DeleteServiceResult =
   | { deleted: true; active: false; message: string }
   | { deleted: false; active: false; message: string };
 
+export interface ServiceCategoryUpsertRequest {
+  slug: string;
+  name: string;
+  active?: boolean | null;
+  displayOrder?: number | null;
+}
+
+export interface AdminServiceCategoryResponse {
+  id: string;
+  slug: string;
+  name: string;
+  active: boolean;
+  displayOrder: number;
+}
+
+export interface AdminCategoryQueryParams {
+  active?: boolean;
+  page?: number;
+  size?: number;
+  sort?: string;
+}
+
+export type DeleteCategoryResult =
+  | { deleted: true; active: false; message: string }
+  | { deleted: false; active: false; message: string };
+
 export interface ConsultationCreateRequest {
   customerName: string;
   phone: string;
