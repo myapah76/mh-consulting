@@ -8,7 +8,6 @@ export const publicServiceCategoryKeys = {
 export function usePublicServiceCategories() {
   return useQuery({
     queryKey: publicServiceCategoryKeys.all,
-    queryFn: getPublicServiceCategories,
-    refetchInterval: 600_000,
+    queryFn: getPublicServiceCategories
   });
 }
