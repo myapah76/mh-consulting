@@ -9,6 +9,6 @@ export function usePublicServiceCategories() {
   return useQuery({
     queryKey: publicServiceCategoryKeys.all,
     queryFn: getPublicServiceCategories,
-    refetchInterval: 30_000,
+    refetchInterval: 600_000,
   });
 }
