@@ -53,6 +53,7 @@ const iconMap = {
 };
 
 export type IconName = keyof typeof iconMap;
+export const supportedIconNames = Object.keys(iconMap) as IconName[];
 
 interface LucideIconProps {
   name: string;

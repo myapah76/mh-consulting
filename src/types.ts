@@ -51,7 +51,86 @@ export interface PageResponse<T> {
   size: number;
   totalElements: number;
   totalPages: number;
+  pageable?: {
+    pageNumber: number;
+    pageSize: number;
+    sort: SortMetadata;
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  sort?: SortMetadata;
 }
+
+export interface SortMetadata {
+  empty: boolean;
+  sorted: boolean;
+  unsorted: boolean;
+}
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  fullName: string;
+  role: 'ADMIN';
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface ApiError {
+  timestamp: string;
+  status: number;
+  code: string;
+  message: string;
+  fieldErrors?: Record<string, string>;
+  path: string;
+}
+
+export interface AdminServiceSummary extends Omit<PublicServiceSummary, 'icon'> {
+  icon: string | null;
+}
+
+export interface AdminService extends AdminServiceSummary {
+  fullContent: string | null;
+  detailedPoints: string[];
+  benefits: string[];
+  processSteps: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminServiceQueryParams {
+  category?: string;
+  active?: boolean;
+  page?: number;
+  size?: number;
+  sort?: string;
+}
+
+export interface ServiceUpsertRequest {
+  slug: string;
+  title: string;
+  categoryId: string;
+  shortDesc: string;
+  icon?: string | null;
+  fullContent?: string | null;
+  active?: boolean | null;
+  displayOrder?: number | null;
+  detailedPoints?: string[] | null;
+  benefits?: string[] | null;
+  processSteps?: string[] | null;
+}
+
+export interface ActivePatchRequest {
+  active: boolean;
+}
+
+export type DeleteServiceResult =
+  | { deleted: true; active: false; message: string }
+  | { deleted: false; active: false; message: string };
 
 export interface ConsultationCreateRequest {
   customerName: string;
