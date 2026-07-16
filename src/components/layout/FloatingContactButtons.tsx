@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import LucideIcon from './LucideIcon';
+import LucideIcon from '../common/LucideIcon';
 
 export default function FloatingContactButtons() {
   const [showScrollTop, setShowScrollTop] = useState(false);

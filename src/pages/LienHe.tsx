@@ -1,5 +1,5 @@
-import LucideIcon from '../components/LucideIcon';
-import ConsultationForm from '../components/ConsultationForm';
+import LucideIcon from '../components/common/LucideIcon';
+import ConsultationForm from '../components/consultation/ConsultationForm';
 
 export default function LienHe() {
   return (

@@ -3,17 +3,69 @@ export interface NavItem {
   path: string;
 }
 
-export interface ServiceItem {
+export interface PublicServiceSummary {
   id: string;
   slug: string;
   title: string;
-  category: 'thanh-lap' | 'ke-toan' | 'thue' | 'khac';
+  category: string;
+  categoryId: string;
+  categoryName: string;
   shortDesc: string;
-  icon: string; // Lucide icon name
-  fullContent?: string;
-  detailedPoints?: string[];
-  benefits?: string[];
-  processSteps?: string[];
+  icon: string;
+  active: boolean;
+  displayOrder: number;
+}
+
+export interface PublicServiceCategory {
+  id: string;
+  slug: string;
+  name: string;
+  active: boolean;
+  displayOrder: number;
+}
+
+export interface PublicServiceDetail extends PublicServiceSummary {
+  fullContent: string;
+  detailedPoints: string[];
+  benefits: string[];
+  processSteps: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PublicServiceQueryParams {
+  category?: string;
+  active?: boolean;
+  page?: number;
+  size?: number;
+  sort?: string;
+}
+
+export interface PageResponse<T> {
+  content: T[];
+  empty: boolean;
+  first: boolean;
+  last: boolean;
+  number: number;
+  numberOfElements: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
+export interface ConsultationCreateRequest {
+  customerName: string;
+  phone: string;
+  email?: string;
+  serviceId: string;
+  message?: string;
+}
+
+export interface ConsultationCreatedResponse {
+  id: string;
+  status: string;
+  message: string;
+  createdAt: string;
 }
 
 export interface Testimonial {

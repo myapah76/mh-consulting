@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import LucideIcon from '../components/LucideIcon';
+import LucideIcon from '../components/common/LucideIcon';
 import { articlesData } from '../data';
 
 export default function TinTuc() {

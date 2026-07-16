@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import LucideIcon from './LucideIcon';
-import { navigationItems } from '../data';
+import LucideIcon from '../common/LucideIcon';
+import { navigationItems } from '../../data';
 
 interface HeaderProps {
   onOpenConsultation: () => void;

@@ -1,27 +1,36 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import LucideIcon from '../components/LucideIcon';
-import { servicesData } from '../data';
+import LucideIcon from '../components/common/LucideIcon';
+import ServiceRequestState from '../components/services/ServiceRequestState';
+import { usePublicServices } from '../hooks/usePublicServices';
 
 interface DichVuProps {
   onOpenConsultation: () => void;
 }
 
+const categories = [
+  { id: 'all', name: 'TẤT CẢ DỊCH VỤ', icon: 'Briefcase' },
+  { id: 'thanh-lap', name: 'THÀNH LẬP', icon: 'Edit3' },
+  { id: 'ke-toan', name: 'KẾ TOÁN', icon: 'Calculator' },
+  { id: 'thue', name: 'THUẾ', icon: 'BarChart2' },
+  { id: 'khac', name: 'DỊCH VỤ KHÁC', icon: 'HeartHandshake' },
+] as const;
+
+type CategoryId = (typeof categories)[number]['id'];
+
+const categoryLabels: Record<string, string> = {
+  'thanh-lap': 'Thành Lập',
+  'ke-toan': 'Kế Toán',
+  thue: 'Thuế',
+  khac: 'Dịch vụ khác',
+};
+
 export default function DichVu({ onOpenConsultation }: DichVuProps) {
-  const [activeTab, setActiveTab] = useState<'all' | 'thanh-lap' | 'ke-toan' | 'thue' | 'khac'>('all');
-
-  const categories = [
-    { id: 'all', name: 'TẤT CẢ DỊCH VỤ', icon: 'Briefcase' },
-    { id: 'thanh-lap', name: 'THÀNH LẬP', icon: 'Edit3' },
-    { id: 'ke-toan', name: 'KẾ TOÁN', icon: 'Calculator' },
-    { id: 'thue', name: 'THUẾ', icon: 'BarChart2' },
-    { id: 'khac', name: 'DỊCH VỤ KHÁC', icon: 'HeartHandshake' },
-  ];
-
-  // Filter services based on selected tab
-  const filteredServices = activeTab === 'all'
-    ? servicesData
-    : servicesData.filter(service => service.category === activeTab);
+  const [activeTab, setActiveTab] = useState<CategoryId>('all');
+  const { data, isPending, isError, refetch } = usePublicServices({
+    category: activeTab === 'all' ? undefined : activeTab,
+  });
+  const services = data?.content ?? [];
 
   return (
     <div className="font-sans text-[#222222] bg-white">
@@ -49,7 +58,7 @@ export default function DichVu({ onOpenConsultation }: DichVuProps) {
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => setActiveTab(cat.id as any)}
+                onClick={() => setActiveTab(cat.id)}
                 className={`flex items-center gap-2 px-5 py-3 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 cursor-pointer ${
                   activeTab === cat.id
                     ? 'bg-[#d40000] text-white shadow-md shadow-[#d40000]/15'
@@ -71,12 +80,37 @@ export default function DichVu({ onOpenConsultation }: DichVuProps) {
             Kết quả tìm kiếm
           </p>
           <h2 className="text-xl font-bold text-gray-900 uppercase">
-            Hiển thị {filteredServices.length} gói dịch vụ phù hợp
+            {isPending
+              ? 'Đang tải danh sách dịch vụ'
+              : `Hiển thị ${data?.totalElements ?? 0} gói dịch vụ phù hợp`}
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredServices.map((service) => (
+          {isPending && (
+            <ServiceRequestState
+              title="Đang tải dịch vụ"
+              message="Vui lòng chờ trong giây lát."
+              loading
+            />
+          )}
+
+          {isError && (
+            <ServiceRequestState
+              title="Không thể tải danh sách dịch vụ"
+              message="Kết nối đến hệ thống đang gặp sự cố. Vui lòng thử lại."
+              onRetry={() => void refetch()}
+            />
+          )}
+
+          {!isPending && !isError && services.length === 0 && (
+            <ServiceRequestState
+              title="Chưa có dịch vụ phù hợp"
+              message="Hiện chưa có dịch vụ nào trong chuyên mục này."
+            />
+          )}
+
+          {!isPending && !isError && services.map((service) => (
             <div
               key={service.id}
               className="bg-white rounded-xl border border-gray-100 shadow-lg hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col group overflow-hidden"
@@ -88,10 +122,7 @@ export default function DichVu({ onOpenConsultation }: DichVuProps) {
                     <LucideIcon name={service.icon} size={22} />
                   </div>
                   <span className="text-[10px] font-black text-[#d40000] bg-[#d40000]/10 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                    {service.category === 'thanh-lap' && 'Thành Lập'}
-                    {service.category === 'ke-toan' && 'Kế Toán'}
-                    {service.category === 'thue' && 'Thuế'}
-                    {service.category === 'khac' && 'Dịch vụ khác'}
+                    {categoryLabels[service.category] ?? service.category}
                   </span>
                 </div>
 

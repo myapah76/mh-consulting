@@ -1,4 +1,4 @@
-import LucideIcon from '../components/LucideIcon';
+import LucideIcon from '../components/common/LucideIcon';
 
 interface GioiThieuProps {
   onOpenConsultation: () => void;

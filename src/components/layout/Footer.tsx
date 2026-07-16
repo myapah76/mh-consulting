@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import LucideIcon from './LucideIcon';
-import { footerLinks } from '../data';
+import LucideIcon from '../common/LucideIcon';
+import { footerLinks } from '../../data';
 
 export default function Footer() {
   return (

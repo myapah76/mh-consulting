@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import LucideIcon from './LucideIcon';
-import { testimonialsData } from '../data';
+import LucideIcon from '../common/LucideIcon';
+import { testimonialsData } from '../../data';
 
 export default function TestimonialCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);

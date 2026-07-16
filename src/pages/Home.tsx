@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
-import LucideIcon from '../components/LucideIcon';
-import ConsultationForm from '../components/ConsultationForm';
-import TestimonialCarousel from '../components/TestimonialCarousel';
-import KnowledgeCarousel from '../components/KnowledgeCarousel';
+import LucideIcon from '../components/common/LucideIcon';
+import ConsultationForm from '../components/consultation/ConsultationForm';
+import TestimonialCarousel from '../components/home/TestimonialCarousel';
+import KnowledgeCarousel from '../components/home/KnowledgeCarousel';
 
 interface HomeProps {
   onOpenConsultation: () => void;
@@ -66,7 +66,7 @@ export default function Home({ onOpenConsultation }: HomeProps) {
                 Chúng tôi cung cấp dịch vụ <strong className="text-[#d40000]">Thành lập doanh nghiệp</strong>, <strong className="text-gray-900">Kế toán trọn gói</strong> và <strong className="text-gray-900">Báo cáo thuế định kỳ</strong> chuẩn mực, giúp tiết kiệm đến <strong className="text-[#d40000]">90% thời gian</strong> và <strong className="text-gray-900">tối ưu hóa chi phí hợp pháp</strong> cho doanh nghiệp của bạn hoạt động an toàn.
               </p>
               
-              <div className="pt-4 max-w-xl mx-auto lg:mx-0">
+              <div className="pt-4 w-full max-w-3xl mx-auto lg:mx-0">
                 <div className="bg-white/80 backdrop-blur p-4 rounded-xl shadow-lg border border-white">
                   <p className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-3 flex items-center gap-1.5 justify-center lg:justify-start">
                     <span className="h-2 w-2 rounded-full bg-[#d40000] animate-pulse" />

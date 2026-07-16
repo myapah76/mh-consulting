@@ -1,23 +1,72 @@
-import { useParams, Link, Navigate } from 'react-router-dom';
-import LucideIcon from '../components/LucideIcon';
-import ConsultationForm from '../components/ConsultationForm';
-import { servicesData } from '../data';
+import axios from 'axios';
+import { useParams, Link } from 'react-router-dom';
+import LucideIcon from '../components/common/LucideIcon';
+import ConsultationForm from '../components/consultation/ConsultationForm';
+import ServiceRequestState from '../components/services/ServiceRequestState';
+import {
+  usePublicServiceBySlug,
+  usePublicServices,
+} from '../hooks/usePublicServices';
 
 export default function DichVuDetail() {
   const { slug } = useParams<{ slug: string }>();
-
-  // Look up current service
-  const service = servicesData.find((s) => s.slug === slug);
-
-  // If service does not exist, redirect to general services page
-  if (!service) {
-    return <Navigate to="/dich-vu" replace />;
-  }
-
-  // Find related services of the same category (excluding current)
-  const relatedServices = servicesData
-    .filter((s) => s.category === service.category && s.id !== service.id)
+  const {
+    data: service,
+    error,
+    isPending,
+    isError,
+    refetch,
+  } = usePublicServiceBySlug(slug);
+  const { data: relatedServicesResponse } = usePublicServices(
+    {
+      category: service?.category,
+      size: 5,
+    },
+    Boolean(service?.category),
+  );
+  const relatedServices = (relatedServicesResponse?.content ?? [])
+    .filter((relatedService) => relatedService.id !== service?.id)
     .slice(0, 4);
+
+  const notFound = !slug || (
+    axios.isAxiosError(error) && error.response?.status === 404
+  );
+
+  if (!slug || isPending || isError || !service) {
+    return (
+      <div className="font-sans text-[#222222] bg-white">
+        <section className="bg-gradient-to-r from-gray-900 to-[#202020] py-12 text-white md:py-16">
+          <div className="max-w-[1200px] mx-auto px-4">
+            <Link to="/dich-vu" className="text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white">
+              Dịch vụ
+            </Link>
+            <h1 className="mt-3 text-2xl font-black uppercase tracking-tight sm:text-3xl">
+              Chi tiết dịch vụ
+            </h1>
+          </div>
+        </section>
+        <section className="max-w-[1200px] mx-auto px-4 py-12 sm:px-6 md:py-16">
+          <ServiceRequestState
+            title={isPending ? 'Đang tải dịch vụ' : notFound ? 'Không tìm thấy dịch vụ' : 'Không thể tải dịch vụ'}
+            message={isPending
+              ? 'Vui lòng chờ trong giây lát.'
+              : notFound
+                ? 'Dịch vụ bạn đang tìm không tồn tại hoặc không còn được cung cấp.'
+                : 'Kết nối đến hệ thống đang gặp sự cố. Vui lòng thử lại.'}
+            loading={isPending}
+            onRetry={!isPending && !notFound ? () => void refetch() : undefined}
+          />
+          {!isPending && notFound && (
+            <div className="mt-6 text-center">
+              <Link to="/dich-vu" className="text-xs font-black uppercase tracking-wider text-[#d40000] hover:text-gray-900">
+                Quay lại danh sách dịch vụ
+              </Link>
+            </div>
+          )}
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="font-sans text-[#222222] bg-white">
@@ -43,7 +92,7 @@ export default function DichVuDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
           {/* Left: Main Details (8 cols on desktop) */}
-          <div className="lg:col-span-8 space-y-8">
+          <div className="lg:col-span-7 space-y-8">
             
             {/* Short Intro Card */}
             <div className="bg-[#eef8ff] p-6 rounded-2xl border border-blue-50 flex gap-4 items-start">
@@ -56,14 +105,16 @@ export default function DichVuDetail() {
             </div>
 
             {/* Full narrative content */}
-            <div className="space-y-4">
-              <h2 className="text-xl font-black text-gray-900 uppercase tracking-tight pb-2 border-b border-gray-100">
-                Tổng Quan Về Gói Dịch Vụ
-              </h2>
-              <p className="text-sm text-gray-600 leading-relaxed font-medium">
-                {service.fullContent}
-              </p>
-            </div>
+            {service.fullContent && (
+              <div className="space-y-4">
+                <h2 className="text-xl font-black text-gray-900 uppercase tracking-tight pb-2 border-b border-gray-100">
+                  Tổng Quan Về Gói Dịch Vụ
+                </h2>
+                <p className="text-sm text-gray-600 leading-relaxed font-medium">
+                  {service.fullContent}
+                </p>
+              </div>
+            )}
 
             {/* Detailed points */}
             {service.detailedPoints && service.detailedPoints.length > 0 && (
@@ -126,7 +177,7 @@ export default function DichVuDetail() {
           </div>
 
           {/* Right: Sidebar & Registration Form (4 cols on desktop) */}
-          <div className="lg:col-span-4 space-y-8">
+          <div className="lg:col-span-5 space-y-8">
             
             {/* Inline Consultation Form Widget */}
             <div className="bg-gray-50 rounded-2xl border border-gray-100 p-6 shadow-md space-y-4">
@@ -136,7 +187,12 @@ export default function DichVuDetail() {
               <p className="text-xs text-gray-500 font-medium leading-relaxed">
                 Nhập thông tin liên lạc của bạn bên dưới. Chuyên viên MH CONSULTING sẽ chuẩn bị sẵn phương án và liên hệ tư vấn trực tiếp ngay.
               </p>
-              <ConsultationForm layout="full" buttonText="Gửi yêu cầu gói này" />
+              <ConsultationForm
+                layout="full"
+                buttonText="Gửi yêu cầu gói này"
+                currentService={service}
+                stackServiceFields
+              />
             </div>
 
             {/* Related Services List */}

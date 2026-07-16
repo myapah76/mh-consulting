@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 
 // Import Global Layout Components
-import Header from './components/Header';
-import Footer from './components/Footer';
-import FloatingContactButtons from './components/FloatingContactButtons';
-import ConsultationModal from './components/ConsultationModal';
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
+import FloatingContactButtons from './components/layout/FloatingContactButtons';
+import ConsultationModal from './components/consultation/ConsultationModal';
 
 // Import Pages
 import Home from './pages/Home';

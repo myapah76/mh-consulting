@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import LucideIcon from './LucideIcon';
-import { articlesData } from '../data';
+import LucideIcon from '../common/LucideIcon';
+import { articlesData } from '../../data';
 
 export default function KnowledgeCarousel() {
   const [startIndex, setStartIndex] = useState(0);
