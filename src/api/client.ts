@@ -1,6 +1,12 @@
-import axios, { type InternalAxiosRequestConfig } from 'axios';
+import axios, {
+  type InternalAxiosRequestConfig,
+} from 'axios';
 
-const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+const rawBaseUrl =
+  import.meta.env.VITE_API_BASE_URL?.trim();
+
+const configuredBaseUrl =
+  rawBaseUrl?.replace(/\/+$/, '');
 
 const apiClient = axios.create({
   baseURL: configuredBaseUrl || undefined,
@@ -13,42 +19,72 @@ interface CsrfResponse {
   token: string;
 }
 
-let csrf: Pick<CsrfResponse, 'headerName' | 'token'> | null = null;
-let csrfRequest: Promise<Pick<CsrfResponse, 'headerName' | 'token'>> | null = null;
+type CachedCsrf = Pick<
+  CsrfResponse,
+  'headerName' | 'token'
+>;
 
-function hasCsrfCookie() {
-  return typeof document !== 'undefined' && document.cookie
-    .split(';')
-    .some((cookie) => cookie.trim().startsWith('XSRF-TOKEN='));
-}
+let csrf: CachedCsrf | null = null;
+let csrfRequest: Promise<CachedCsrf> | null = null;
 
 export function clearCsrfToken() {
   csrf = null;
 }
 
-export async function ensureCsrfToken() {
-  if (csrf && hasCsrfCookie()) return csrf;
+export async function ensureCsrfToken(): Promise<CachedCsrf> {
+  if (csrf) {
+    return csrf;
+  }
+
   if (!csrfRequest) {
-    csrfRequest = apiClient.get<CsrfResponse>('/api/auth/csrf')
+    csrfRequest = apiClient
+      .get<CsrfResponse>('/api/auth/csrf')
       .then(({ data }) => {
-        csrf = { headerName: data.headerName, token: data.token };
+        if (
+          !data.headerName?.trim() ||
+          !data.token?.trim()
+        ) {
+          throw new Error('Invalid CSRF response');
+        }
+
+        csrf = {
+          headerName: data.headerName,
+          token: data.token,
+        };
+
         return csrf;
       })
       .finally(() => {
         csrfRequest = null;
       });
   }
+
   return csrfRequest;
 }
 
-const unsafeMethods = new Set(['post', 'put', 'patch', 'delete']);
+const unsafeMethods = new Set([
+  'post',
+  'put',
+  'patch',
+  'delete',
+]);
 
-apiClient.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
-  if (config.method && unsafeMethods.has(config.method.toLowerCase())) {
-    const currentCsrf = await ensureCsrfToken();
-    config.headers.set(currentCsrf.headerName, currentCsrf.token);
+apiClient.interceptors.request.use(
+  async (config: InternalAxiosRequestConfig) => {
+    const method = config.method?.toLowerCase();
+
+    if (method && unsafeMethods.has(method)) {
+      const currentCsrf =
+        await ensureCsrfToken();
+
+      config.headers.set(
+        currentCsrf.headerName,
+        currentCsrf.token
+      );
+    }
+
+    return config;
   }
-  return config;
-});
+);
 
 export default apiClient;
