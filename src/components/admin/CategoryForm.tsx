@@ -14,11 +14,10 @@ interface CategoryFormProps {
 interface CategoryFormValues {
   name: string;
   slug: string;
-  displayOrder: string;
   active: boolean;
 }
 
-const emptyValues: CategoryFormValues = { name: '', slug: '', displayOrder: '0', active: true };
+const emptyValues: CategoryFormValues = { name: '', slug: '', active: true };
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export default function CategoryForm({ initialCategory, backendErrors = {}, formError, pending, cancelTo, onSubmit }: CategoryFormProps) {
@@ -27,7 +26,7 @@ export default function CategoryForm({ initialCategory, backendErrors = {}, form
 
   useEffect(() => {
     if (!initialCategory) return;
-    setValues({ name: initialCategory.name, slug: initialCategory.slug, displayOrder: String(initialCategory.displayOrder), active: initialCategory.active });
+    setValues({ name: initialCategory.name, slug: initialCategory.slug, active: initialCategory.active });
   }, [initialCategory]);
 
   const errors = { ...backendErrors, ...clientErrors };
@@ -43,11 +42,9 @@ export default function CategoryForm({ initialCategory, backendErrors = {}, form
     if (!values.slug.trim()) nextErrors.slug = 'Vui lòng nhập slug.';
     else if (values.slug.length > 200) nextErrors.slug = 'Slug không được vượt quá 200 ký tự.';
     else if (!slugPattern.test(values.slug)) nextErrors.slug = 'Slug chỉ được chứa chữ thường, số và dấu gạch ngang.';
-    const displayOrder = Number(values.displayOrder);
-    if (!Number.isInteger(displayOrder) || displayOrder < 0) nextErrors.displayOrder = 'Thứ tự hiển thị phải là số nguyên không âm.';
     setClientErrors(nextErrors);
     if (Object.keys(nextErrors).length) return;
-    onSubmit({ name: values.name.trim(), slug: values.slug.trim(), displayOrder, active: values.active });
+    onSubmit({ name: values.name.trim(), slug: values.slug.trim(), active: values.active });
   };
   const inputClass = 'w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-[#d40000] focus:ring-2 focus:ring-[#d40000]/10 disabled:bg-gray-100';
 
@@ -59,7 +56,6 @@ export default function CategoryForm({ initialCategory, backendErrors = {}, form
         <div className="mt-5 grid gap-5 md:grid-cols-2">
           <Field label="Tên danh mục" required error={errors.name}><input value={values.name} onChange={(event) => setField('name', event.target.value)} maxLength={200} disabled={pending} className={inputClass} /></Field>
           <Field label="Slug" required error={errors.slug}><input value={values.slug} onChange={(event) => setField('slug', event.target.value)} maxLength={200} disabled={pending} className={inputClass} placeholder="vi-du-danh-muc" /></Field>
-          <Field label="Thứ tự hiển thị" error={errors.displayOrder}><input type="number" min="0" step="1" value={values.displayOrder} onChange={(event) => setField('displayOrder', event.target.value)} disabled={pending} className={inputClass} /></Field>
           <label className="flex items-center gap-3 self-end rounded-lg bg-gray-50 px-4 py-3 text-sm font-bold"><input type="checkbox" checked={values.active} onChange={(event) => setField('active', event.target.checked)} disabled={pending} className="h-4 w-4 accent-[#d40000]" /> Trạng thái hoạt động</label>
         </div>
       </div>

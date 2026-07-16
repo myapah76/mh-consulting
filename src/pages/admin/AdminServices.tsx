@@ -4,6 +4,7 @@ import ConfirmDialog from '../../components/common/ConfirmDialog';
 import LucideIcon from '../../components/common/LucideIcon';
 import { useToast } from '../../components/common/ToastProvider';
 import { useAdminServices, useDeleteService, useUpdateServiceActive } from '../../hooks/useAdminServices';
+import { usePublicServiceCategories } from '../../hooks/usePublicServiceCategories';
 import type { AdminServiceSummary } from '../../types';
 import { getVietnameseApiError } from '../../utils/apiError';
 
@@ -25,6 +26,7 @@ export default function AdminServices() {
     ...(sort ? { sort } : {}),
   }), [activeValue, category, sort, uiPage]);
   const services = useAdminServices(params);
+  const categories = usePublicServiceCategories();
   const activeMutation = useUpdateServiceActive();
   const deleteMutation = useDeleteService();
   const { showToast } = useToast();
@@ -68,7 +70,8 @@ export default function AdminServices() {
         <Link to="/admin/services/new" className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#d40000] px-5 py-3 text-sm font-black text-white shadow transition hover:bg-gray-900"><span className="text-lg leading-none">+</span> Thêm Dịch Vụ</Link>
       </div>
 
-      <div className="mt-6 grid gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm md:grid-cols-2">
+      <div className="mt-6 grid gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm md:grid-cols-3">
+        <label><span className="mb-1.5 block text-xs font-bold text-gray-600">Danh mục</span><select value={category} onChange={(event) => setFilter('category', event.target.value)} disabled={categories.isPending} className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm disabled:bg-gray-100"><option value="">{categories.isPending ? 'Đang tải danh mục...' : 'Tất cả danh mục'}</option>{categories.data?.map((item) => <option key={item.id} value={item.slug}>{item.name}</option>)}</select>{categories.isError && <span className="mt-1.5 block text-xs font-semibold text-red-600">Không thể tải danh mục.</span>}</label>
         <label><span className="mb-1.5 block text-xs font-bold text-gray-600">Trạng thái</span><select value={activeValue} onChange={(event) => setFilter('active', event.target.value === 'all' ? '' : event.target.value)} className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm"><option value="all">Tất cả</option><option value="true">Đang hoạt động</option><option value="false">Không hoạt động</option></select></label>
         <label><span className="mb-1.5 block text-xs font-bold text-gray-600">Sắp xếp</span><select value={sort} onChange={(event) => setFilter('sort', event.target.value)} className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm"><option value="">Mặc định</option><option value="title,asc">Tên A–Z</option><option value="title,desc">Tên Z–A</option><option value="createdAt,desc">Mới tạo gần đây</option><option value="updatedAt,desc">Mới cập nhật gần đây</option></select></label>
       </div>

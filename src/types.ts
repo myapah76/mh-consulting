@@ -20,7 +20,6 @@ export interface PublicServiceCategory {
   slug: string;
   name: string;
   active: boolean;
-  displayOrder: number;
 }
 
 export interface PublicServiceDetail extends PublicServiceSummary {
@@ -134,7 +133,6 @@ export interface ServiceCategoryUpsertRequest {
   slug: string;
   name: string;
   active?: boolean | null;
-  displayOrder?: number | null;
 }
 
 export interface AdminServiceCategoryResponse {
@@ -142,7 +140,6 @@ export interface AdminServiceCategoryResponse {
   slug: string;
   name: string;
   active: boolean;
-  displayOrder: number;
 }
 
 export interface AdminCategoryQueryParams {
