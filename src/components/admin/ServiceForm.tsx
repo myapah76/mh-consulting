@@ -12,7 +12,6 @@ interface FormValues {
   icon: string;
   fullContent: string;
   active: boolean;
-  displayOrder: string;
   detailedPoints: string[];
   benefits: string[];
   processSteps: string[];
@@ -27,7 +26,7 @@ interface ServiceFormProps {
   onSubmit: (request: ServiceUpsertRequest) => void;
 }
 
-const emptyValues: FormValues = { slug: '', title: '', categoryId: '', shortDesc: '', icon: '', fullContent: '', active: true, displayOrder: '0', detailedPoints: [], benefits: [], processSteps: [] };
+const emptyValues: FormValues = { slug: '', title: '', categoryId: '', shortDesc: '', icon: '', fullContent: '', active: true, detailedPoints: [], benefits: [], processSteps: [] };
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const htmlPattern = /<[^>]+>/;
 
@@ -38,7 +37,7 @@ export default function ServiceForm({ initialService, backendErrors = {}, formEr
 
   useEffect(() => {
     if (!initialService) return;
-    setValues({ slug: initialService.slug, title: initialService.title, categoryId: initialService.categoryId, shortDesc: initialService.shortDesc, icon: initialService.icon ?? '', fullContent: initialService.fullContent ?? '', active: initialService.active, displayOrder: String(initialService.displayOrder), detailedPoints: [...initialService.detailedPoints], benefits: [...initialService.benefits], processSteps: [...initialService.processSteps] });
+    setValues({ slug: initialService.slug, title: initialService.title, categoryId: initialService.categoryId, shortDesc: initialService.shortDesc, icon: initialService.icon ?? '', fullContent: initialService.fullContent ?? '', active: initialService.active, detailedPoints: [...initialService.detailedPoints], benefits: [...initialService.benefits], processSteps: [...initialService.processSteps] });
   }, [initialService]);
 
   const errors = { ...backendErrors, ...clientErrors };
@@ -61,8 +60,6 @@ export default function ServiceForm({ initialService, backendErrors = {}, formEr
     if (values.icon.length > 100) next.icon = 'Tên biểu tượng không được vượt quá 100 ký tự.';
     if (values.fullContent.length > 20000) next.fullContent = 'Nội dung không được vượt quá 20.000 ký tự.';
     else if (htmlPattern.test(values.fullContent)) next.fullContent = 'Nội dung không được chứa thẻ HTML.';
-    const order = Number(values.displayOrder);
-    if (!Number.isInteger(order) || order < 0) next.displayOrder = 'Thứ tự hiển thị phải là số nguyên không âm.';
     (['detailedPoints', 'benefits', 'processSteps'] as const).forEach((field) => {
       const nonBlank = values[field].filter((item) => item.trim());
       if (nonBlank.length > 100) next[field] = 'Danh sách không được vượt quá 100 mục.';
@@ -76,7 +73,7 @@ export default function ServiceForm({ initialService, backendErrors = {}, formEr
     event.preventDefault();
     if (!validate()) return;
     const clean = (items: string[]) => items.map((item) => item.trim()).filter(Boolean);
-    onSubmit({ slug: values.slug.trim(), title: values.title.trim(), categoryId: values.categoryId, shortDesc: values.shortDesc.trim(), icon: values.icon || null, fullContent: values.fullContent.trim() || null, active: values.active, displayOrder: Number(values.displayOrder), detailedPoints: clean(values.detailedPoints), benefits: clean(values.benefits), processSteps: clean(values.processSteps) });
+    onSubmit({ slug: values.slug.trim(), title: values.title.trim(), categoryId: values.categoryId, shortDesc: values.shortDesc.trim(), icon: values.icon || null, fullContent: values.fullContent.trim() || null, active: values.active, detailedPoints: clean(values.detailedPoints), benefits: clean(values.benefits), processSteps: clean(values.processSteps) });
   };
 
   const inputClass = 'w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-[#d40000] focus:ring-2 focus:ring-[#d40000]/10 disabled:bg-gray-100';
@@ -89,7 +86,6 @@ export default function ServiceForm({ initialService, backendErrors = {}, formEr
           <Field label="Slug" required error={errors.slug}><input value={values.slug} onChange={(event) => setField('slug', event.target.value)} maxLength={200} disabled={pending} className={inputClass} placeholder="vi-du-dich-vu" /></Field>
           <Field label="Tên dịch vụ" required error={errors.title}><input value={values.title} onChange={(event) => setField('title', event.target.value)} maxLength={200} disabled={pending} className={inputClass} /></Field>
           <Field label="Danh mục" required error={errors.categoryId ?? errors.category}><select value={values.categoryId} onChange={(event) => setField('categoryId', event.target.value)} disabled={pending || categories.isPending} className={inputClass}><option value="">{categories.isPending ? 'Đang tải danh mục...' : 'Chọn danh mục'}</option>{categories.data?.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></Field>
-          <Field label="Thứ tự hiển thị" error={errors.displayOrder}><input type="number" min="0" step="1" value={values.displayOrder} onChange={(event) => setField('displayOrder', event.target.value)} disabled={pending} className={inputClass} /></Field>
           <div className="md:col-span-2"><Field label="Mô tả ngắn" required error={errors.shortDesc}><textarea value={values.shortDesc} onChange={(event) => setField('shortDesc', event.target.value)} maxLength={1000} rows={4} disabled={pending} className={inputClass} /><CharacterCount value={values.shortDesc} max={1000} /></Field></div>
           <Field label="Biểu tượng" error={errors.icon}><div className="flex gap-3"><select value={values.icon} onChange={(event) => setField('icon', event.target.value)} disabled={pending} className={inputClass}><option value="">Mặc định (Briefcase)</option>{values.icon && !supportedIconNames.includes(values.icon as (typeof supportedIconNames)[number]) && <option value={values.icon}>{values.icon} (không hỗ trợ, dùng biểu tượng mặc định)</option>}{supportedIconNames.map((name) => <option key={name} value={name}>{name}</option>)}</select><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#d40000]/10 text-[#d40000]" title="Xem trước biểu tượng"><LucideIcon name={values.icon || 'Briefcase'} size={22} /></span></div></Field>
           <label className="flex items-center gap-3 self-end rounded-lg bg-gray-50 px-4 py-3 text-sm font-bold"><input type="checkbox" checked={values.active} onChange={(event) => setField('active', event.target.checked)} disabled={pending} className="h-4 w-4 accent-[#d40000]" /> Đang hoạt động</label>

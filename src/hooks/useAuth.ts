@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getCurrentAdmin, loginAdmin, logoutAdmin, prepareCsrf } from '../services/authService';
+import { useCallback } from 'react';
+import { clearLocalAuthState, getCurrentAdmin, loginAdmin, logoutAdmin, prepareCsrf } from '../services/authService';
 import type { AdminUser } from '../types';
 
 export const authKeys = {
@@ -34,4 +35,12 @@ export function useLogoutAdmin() {
     retry: false,
     onSuccess: () => queryClient.setQueryData(authKeys.current, null),
   });
+}
+
+export function useClearAdminSession() {
+  const queryClient = useQueryClient();
+  return useCallback(() => {
+    clearLocalAuthState();
+    queryClient.setQueryData(authKeys.current, null);
+  }, [queryClient]);
 }

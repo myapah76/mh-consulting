@@ -5,6 +5,10 @@ export function prepareCsrf() {
   return ensureCsrfToken();
 }
 
+export function clearLocalAuthState() {
+  clearCsrfToken();
+}
+
 export async function loginAdmin(request: LoginRequest): Promise<AdminUser> {
   const { data } = await apiClient.post<AdminUser>('/api/auth/login', request);
   return data;

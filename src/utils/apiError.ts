@@ -6,6 +6,10 @@ export function getApiError(error: unknown): ApiError | undefined {
   return error.response?.data;
 }
 
+export function getApiStatus(error: unknown): number | undefined {
+  return axios.isAxiosError(error) ? error.response?.status : undefined;
+}
+
 export function getVietnameseApiError(error: unknown, fallback: string): string {
   const apiError = getApiError(error);
   if (!apiError) return fallback;
@@ -19,6 +23,9 @@ export function getVietnameseApiError(error: unknown, fallback: string): string 
     VALIDATION_ERROR: 'Vui lòng kiểm tra lại các trường thông tin.',
     INVALID_REQUEST: 'Dữ liệu gửi lên không hợp lệ.',
     INVALID_PARAMETER: 'Tham số yêu cầu không hợp lệ.',
+    DUPLICATE_EMAIL: 'Email này đã được sử dụng.',
+    EMAIL_ALREADY_EXISTS: 'Email này đã được sử dụng.',
+    INVALID_CURRENT_PASSWORD: 'Mật khẩu hiện tại không chính xác.',
   };
   return messages[apiError.code] ?? apiError.message ?? fallback;
 }

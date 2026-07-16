@@ -4,7 +4,6 @@ import ConfirmDialog from '../../components/common/ConfirmDialog';
 import LucideIcon from '../../components/common/LucideIcon';
 import { useToast } from '../../components/common/ToastProvider';
 import { useAdminServices, useDeleteService, useUpdateServiceActive } from '../../hooks/useAdminServices';
-import { usePublicServiceCategories } from '../../hooks/usePublicServiceCategories';
 import type { AdminServiceSummary } from '../../types';
 import { getVietnameseApiError } from '../../utils/apiError';
 
@@ -15,7 +14,7 @@ export default function AdminServices() {
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const category = searchParams.get('category') ?? '';
   const activeValue = searchParams.get('active') ?? 'all';
-  const sort = searchParams.get('sort') ?? 'displayOrder,asc';
+  const sort = searchParams.get('sort') ?? '';
   const parsedPage = Number(searchParams.get('page') ?? '1');
   const uiPage = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
   const params = useMemo(() => ({
@@ -23,10 +22,9 @@ export default function AdminServices() {
     ...(activeValue === 'true' || activeValue === 'false' ? { active: activeValue === 'true' } : {}),
     page: uiPage - 1,
     size: 20,
-    sort,
+    ...(sort ? { sort } : {}),
   }), [activeValue, category, sort, uiPage]);
   const services = useAdminServices(params);
-  const categories = usePublicServiceCategories();
   const activeMutation = useUpdateServiceActive();
   const deleteMutation = useDeleteService();
   const { showToast } = useToast();
@@ -70,9 +68,9 @@ export default function AdminServices() {
         <Link to="/admin/services/new" className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#d40000] px-5 py-3 text-sm font-black text-white shadow transition hover:bg-gray-900"><span className="text-lg leading-none">+</span> Thêm Dịch Vụ</Link>
       </div>
 
-      <div className="mt-6 grid gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm md:grid-cols-3">
+      <div className="mt-6 grid gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm md:grid-cols-2">
         <label><span className="mb-1.5 block text-xs font-bold text-gray-600">Trạng thái</span><select value={activeValue} onChange={(event) => setFilter('active', event.target.value === 'all' ? '' : event.target.value)} className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm"><option value="all">Tất cả</option><option value="true">Đang hoạt động</option><option value="false">Không hoạt động</option></select></label>
-        <label><span className="mb-1.5 block text-xs font-bold text-gray-600">Sắp xếp</span><select value={sort} onChange={(event) => setFilter('sort', event.target.value)} className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm"><option value="displayOrder,asc">Thứ tự tăng dần</option><option value="displayOrder,desc">Thứ tự giảm dần</option><option value="title,asc">Tên A–Z</option><option value="title,desc">Tên Z–A</option><option value="createdAt,desc">Mới tạo gần đây</option><option value="updatedAt,desc">Mới cập nhật gần đây</option></select></label>
+        <label><span className="mb-1.5 block text-xs font-bold text-gray-600">Sắp xếp</span><select value={sort} onChange={(event) => setFilter('sort', event.target.value)} className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm"><option value="">Mặc định</option><option value="title,asc">Tên A–Z</option><option value="title,desc">Tên Z–A</option><option value="createdAt,desc">Mới tạo gần đây</option><option value="updatedAt,desc">Mới cập nhật gần đây</option></select></label>
       </div>
 
       <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
@@ -81,10 +79,9 @@ export default function AdminServices() {
         {!services.isPending && !services.isError && services.data?.content.length === 0 && <RequestState text="Chưa có dịch vụ phù hợp với bộ lọc." />}
         {services.data && services.data.content.length > 0 && (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px] text-left text-sm">
+            <table className="w-full min-w-[800px] text-left text-sm">
               <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
                 <tr>
-                  <th className="px-5 py-4">Thứ tự</th>
                   <th className="px-5 py-4">Dịch vụ</th>
                   <th className="px-5 py-4">Danh mục</th>
                   <th className="px-5 py-4">Trạng thái</th>
@@ -93,7 +90,6 @@ export default function AdminServices() {
               </thead>
               <tbody className="divide-y divide-gray-100">{services.data.content.map((service) => (
                 <tr key={service.id} className="hover:bg-gray-50/70">
-                  <td className="px-5 py-4 font-bold text-gray-500">{service.displayOrder}</td>
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#d40000]/10 text-[#d40000]">
