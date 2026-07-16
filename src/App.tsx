@@ -24,6 +24,7 @@ import AdminCategoryCreate from './pages/admin/AdminCategoryCreate';
 import AdminCategoryEdit from './pages/admin/AdminCategoryEdit';
 import AdminAccountCreate from './pages/admin/AdminAccountCreate';
 import AdminChangePassword from './pages/admin/AdminChangePassword';
+import AdminConsultations from './pages/admin/AdminConsultations';
 import ProtectedAdminRoute from './components/admin/ProtectedAdminRoute';
 import AdminLayout from './components/admin/AdminLayout';
 
@@ -98,6 +99,7 @@ export default function App() {
             <Route path="categories" element={<AdminCategories />} />
             <Route path="categories/new" element={<AdminCategoryCreate />} />
             <Route path="categories/:id/edit" element={<AdminCategoryEdit />} />
+            <Route path="consultations" element={<AdminConsultations />} />
             <Route path="accounts/new" element={<AdminAccountCreate />} />
             <Route path="change-password" element={<AdminChangePassword />} />
           </Route>

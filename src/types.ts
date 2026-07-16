@@ -192,6 +192,37 @@ export interface ConsultationCreatedResponse {
   createdAt: string;
 }
 
+export type ConsultationStatus = 'NEW' | 'CONTACTED' | 'COMPLETED' | 'CANCELLED';
+
+export interface ConsultationResponse {
+  id: string;
+  customerName: string;
+  phone: string;
+  email: string | null;
+  serviceId: string | null;
+  serviceTitleSnapshot: string | null;
+  message: string | null;
+  status: ConsultationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminConsultationListParams {
+  status?: ConsultationStatus;
+  serviceId?: string;
+  phone?: string;
+  email?: string;
+  createdFrom?: string;
+  createdTo?: string;
+  page?: number;
+  size?: number;
+  sort?: string;
+}
+
+export interface ConsultationStatusRequest {
+  status: ConsultationStatus;
+}
+
 export interface Testimonial {
   id: string;
   name: string;

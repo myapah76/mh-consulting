@@ -49,6 +49,9 @@ export default function AdminLayout() {
             <NavLink to="/admin/categories" onClick={() => setMenuOpen(false)} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold ${isActive ? 'bg-[#d40000] text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
               <LucideIcon name="FolderTree" size={18} /> Quản lý danh mục
             </NavLink>
+            <NavLink to="/admin/consultations" onClick={() => setMenuOpen(false)} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold ${isActive ? 'bg-[#d40000] text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
+              <LucideIcon name="MessagesSquare" size={18} /> Yêu cầu tư vấn
+            </NavLink>
             <p className="px-4 pb-1 pt-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Quản lý tài khoản</p>
             <NavLink to="/admin/accounts/new" onClick={() => setMenuOpen(false)} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold ${isActive ? 'bg-[#d40000] text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
               <LucideIcon name="UserPlus" size={18} /> Tạo tài khoản quản trị
