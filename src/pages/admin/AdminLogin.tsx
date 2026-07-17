@@ -18,7 +18,7 @@ export default function AdminLogin() {
 
   useEffect(() => { void prepareCsrf().catch(() => undefined); }, []);
 
-  if (admin) return <Navigate to="/admin/services" replace />;
+  if (admin) return <Navigate to="/admin/dashboard" replace />;
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
