@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 import { useToast } from '../../components/common/ToastProvider';
@@ -60,6 +60,8 @@ export default function AdminConsultations() {
   const [draft, setDraft] = useState<FilterDraft>(() => readDraft(searchParams));
   const [filterError, setFilterError] = useState('');
   const [selectedId, setSelectedId] = useState<string>();
+  const searchParamsRef = useRef(searchParams);
+  searchParamsRef.current = searchParams;
   const parsedPage = Number(searchParams.get('page') ?? '1');
   const uiPage = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
   const parsedSize = Number(searchParams.get('size') ?? '20');
@@ -81,22 +83,49 @@ export default function AdminConsultations() {
       ...(createdTo ? { createdTo } : {}),
       page: uiPage - 1,
       size: pageSize,
-      sort: 'createdAt,desc',
     };
   }, [pageSize, searchParams, uiPage]);
 
   const consultations = useAdminConsultations(params);
-  const services = useAdminServices({ page: 0, size: 100, sort: 'title,asc' });
+  const services = useAdminServices({ page: 0, size: 100 });
 
-  const updateDraft = (field: keyof FilterDraft, value: string) => {
+  const updateTextFilter = (field: 'phone' | 'email', value: string) => {
     setDraft((current) => ({ ...current, [field]: value }));
-    setFilterError('');
   };
 
-  const applyFilters = () => {
-    const from = toIsoInstant(draft.createdFrom);
-    const to = toIsoInstant(draft.createdTo);
-    if ((draft.createdFrom && !from) || (draft.createdTo && !to)) {
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      const current = searchParamsRef.current;
+      const phone = draft.phone.trim();
+      const email = draft.email.trim();
+      if ((current.get('phone') ?? '') === phone && (current.get('email') ?? '') === email) return;
+
+      const next = new URLSearchParams(current);
+      phone ? next.set('phone', phone) : next.delete('phone');
+      email ? next.set('email', email) : next.delete('email');
+      next.set('page', '1');
+      next.set('size', String(pageSize));
+      setSearchParams(next, { replace: true });
+    }, 450);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [draft.email, draft.phone, pageSize, setSearchParams]);
+
+  const updateImmediateFilter = (field: 'status' | 'serviceId', value: string) => {
+    setDraft((current) => ({ ...current, [field]: value }));
+    const next = new URLSearchParams(searchParamsRef.current);
+    value ? next.set(field, value) : next.delete(field);
+    next.set('page', '1');
+    next.set('size', String(pageSize));
+    setSearchParams(next);
+  };
+
+  const updateDateFilter = (field: 'createdFrom' | 'createdTo', value: string) => {
+    const nextDraft = { ...draft, [field]: value };
+    setDraft(nextDraft);
+    const from = toIsoInstant(nextDraft.createdFrom);
+    const to = toIsoInstant(nextDraft.createdTo);
+    if ((nextDraft.createdFrom && !from) || (nextDraft.createdTo && !to)) {
       setFilterError('Ngày đã nhập không hợp lệ.');
       return;
     }
@@ -104,13 +133,9 @@ export default function AdminConsultations() {
       setFilterError('Từ ngày không được sau Đến ngày.');
       return;
     }
-    const next = new URLSearchParams();
-    if (validStatus(draft.status)) next.set('status', draft.status);
-    if (draft.serviceId.trim()) next.set('serviceId', draft.serviceId.trim());
-    if (draft.phone.trim()) next.set('phone', draft.phone.trim());
-    if (draft.email.trim()) next.set('email', draft.email.trim());
-    if (draft.createdFrom) next.set('createdFrom', draft.createdFrom);
-    if (draft.createdTo) next.set('createdTo', draft.createdTo);
+    const next = new URLSearchParams(searchParamsRef.current);
+    nextDraft.createdFrom ? next.set('createdFrom', nextDraft.createdFrom) : next.delete('createdFrom');
+    nextDraft.createdTo ? next.set('createdTo', nextDraft.createdTo) : next.delete('createdTo');
     next.set('page', '1');
     next.set('size', String(pageSize));
     setSearchParams(next);
@@ -146,23 +171,22 @@ export default function AdminConsultations() {
 
       <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          <FilterSelect label="Trạng thái" value={draft.status} onChange={(value) => updateDraft('status', value)}>
+          <FilterSelect label="Trạng thái" value={draft.status} onChange={(value) => updateImmediateFilter('status', value)}>
             <option value="">Tất cả trạng thái</option>
             {statuses.map((status) => <option key={status} value={status}>{consultationStatusLabels[status]}</option>)}
           </FilterSelect>
-          <FilterSelect label="Dịch vụ" value={draft.serviceId} onChange={(value) => updateDraft('serviceId', value)} disabled={services.isPending}>
+          <FilterSelect label="Dịch vụ" value={draft.serviceId} onChange={(value) => updateImmediateFilter('serviceId', value)} disabled={services.isPending}>
             <option value="">{services.isPending ? 'Đang tải dịch vụ...' : 'Tất cả dịch vụ'}</option>
             {services.data?.content.map((service) => <option key={service.id} value={service.id}>{service.title}</option>)}
           </FilterSelect>
-          <FilterInput label="Số điện thoại" value={draft.phone} onChange={(value) => updateDraft('phone', value)} placeholder="Nhập số điện thoại" />
-          <FilterInput label="Email" value={draft.email} onChange={(value) => updateDraft('email', value)} placeholder="Nhập email" type="email" />
-          <FilterInput label="Từ ngày" value={draft.createdFrom} onChange={(value) => updateDraft('createdFrom', value)} type="datetime-local" />
-          <FilterInput label="Đến ngày" value={draft.createdTo} onChange={(value) => updateDraft('createdTo', value)} type="datetime-local" />
+          <FilterInput label="Số điện thoại" value={draft.phone} onChange={(value) => updateTextFilter('phone', value)} placeholder="Nhập số điện thoại" />
+          <FilterInput label="Email" value={draft.email} onChange={(value) => updateTextFilter('email', value)} placeholder="Nhập email" type="email" />
+          <FilterInput label="Từ ngày" value={draft.createdFrom} onChange={(value) => updateDateFilter('createdFrom', value)} type="datetime-local" />
+          <FilterInput label="Đến ngày" value={draft.createdTo} onChange={(value) => updateDateFilter('createdTo', value)} type="datetime-local" />
         </div>
         {services.isError && <p className="mt-3 text-xs font-semibold text-red-600">Không thể tải danh sách dịch vụ.</p>}
         {filterError && <p className="mt-3 text-sm font-semibold text-red-600" role="alert">{filterError}</p>}
         <div className="mt-4 flex flex-wrap gap-3">
-          <button type="button" onClick={applyFilters} className="rounded-lg bg-[#d40000] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-gray-900">Tìm kiếm</button>
           <button type="button" onClick={clearFilters} className="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-bold text-gray-700 transition hover:border-gray-500">Xóa bộ lọc</button>
         </div>
       </div>

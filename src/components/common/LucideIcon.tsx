@@ -26,7 +26,8 @@ import {
   FolderTree,
   MessagesSquare,
   UserPlus,
-  KeyRound
+  KeyRound,
+  LogOut
 } from 'lucide-react';
 
 const iconMap = {
@@ -57,7 +58,8 @@ const iconMap = {
   FolderTree,
   MessagesSquare,
   UserPlus,
-  KeyRound
+  KeyRound,
+  LogOut
 };
 
 export type IconName = keyof typeof iconMap;
