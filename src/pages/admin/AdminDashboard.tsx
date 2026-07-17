@@ -14,6 +14,38 @@ const periodOptions: Array<{ value: PeriodOption; label: string }> = [
   { value: 'custom', label: 'Tùy chọn' },
 ];
 
+const WEEKDAY_LABELS = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+const FULL_WEEKDAY_LABELS = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+
+function parseLocalDate(date: string): Date | undefined {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  if (!match) return undefined;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const value = new Date(year, month - 1, day);
+  if (value.getFullYear() !== year || value.getMonth() !== month - 1 || value.getDate() !== day) return undefined;
+  return value;
+}
+
+function formatChartDate(date: string): string {
+  const value = parseLocalDate(date);
+  if (!value) return 'Không xác định';
+  const weekday = WEEKDAY_LABELS[value.getDay()];
+  const day = String(value.getDate()).padStart(2, '0');
+  const month = String(value.getMonth() + 1).padStart(2, '0');
+  return `${weekday} ${day}/${month}`;
+}
+
+function formatFullCalendarDate(date: string): string {
+  const value = parseLocalDate(date);
+  if (!value) return 'Không xác định';
+  const weekday = FULL_WEEKDAY_LABELS[value.getDay()];
+  const day = String(value.getDate()).padStart(2, '0');
+  const month = String(value.getMonth() + 1).padStart(2, '0');
+  return `${weekday}, ${day}/${month}/${value.getFullYear()}`;
+}
+
 function toStartOfDayIso(date: string): string | undefined {
   if (!date) return undefined;
   const value = new Date(`${date}T00:00:00`);
@@ -55,9 +87,16 @@ function formatPeriodDate(value: string, timezone: string): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return 'Không xác định';
   try {
-    return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: timezone }).format(date);
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      day: '2-digit', month: '2-digit', year: 'numeric', timeZone: timezone,
+    }).formatToParts(date);
+    const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((item) => item.type === type)?.value;
+    const year = part('year');
+    const month = part('month');
+    const day = part('day');
+    return year && month && day ? formatFullCalendarDate(`${year}-${month}-${day}`) : 'Không xác định';
   } catch {
-    return new Intl.DateTimeFormat('vi-VN').format(date);
+    return 'Không xác định';
   }
 }
 
@@ -171,8 +210,10 @@ function DailyChart({ items }: { items: Array<{ date: string; count: number }> }
   const maximum = Math.max(...items.map((item) => item.count), 1);
   return <div className="mt-6 overflow-x-auto"><div className="flex h-56 min-w-[520px] items-end gap-2 border-b border-gray-200 px-1">{items.map((item) => {
     const height = item.count === 0 ? 2 : Math.max(8, (item.count / maximum) * 160);
-    const label = new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit' }).format(new Date(`${item.date}T00:00:00`));
-    return <div key={item.date} className="flex min-w-8 flex-1 flex-col items-center justify-end gap-2" title={`${label}: ${item.count} yêu cầu`}><span className="text-[10px] font-bold text-gray-600">{item.count}</span><div className="w-full max-w-10 rounded-t-md bg-[#d40000]" style={{ height }} /><span className="whitespace-nowrap pb-2 text-[10px] text-gray-500">{label}</span></div>;
+    const [weekday, ...calendarDateParts] = formatChartDate(item.date).split(' ');
+    const calendarDate = calendarDateParts.join(' ');
+    const fullLabel = formatFullCalendarDate(item.date);
+    return <div key={item.date} className="flex min-w-8 flex-1 flex-col items-center justify-end gap-2" title={`${fullLabel}: ${item.count} yêu cầu`} aria-label={`${fullLabel}: ${item.count} yêu cầu`}><span className="text-[10px] font-bold text-gray-600">{item.count}</span><div className="w-full max-w-10 rounded-t-md bg-[#d40000]" style={{ height }} /><span className="pb-2 text-center text-[10px] leading-4 text-gray-500"><strong className="block font-bold text-gray-700">{weekday}</strong><span className="block whitespace-nowrap">{calendarDate}</span></span></div>;
   })}</div></div>;
 }
 
