@@ -12,7 +12,6 @@ import type { EmailSettingsResponse, EmailSettingsUpdateRequest } from '../types
 
 interface FormValues {
   enabled: boolean;
-  fromEmail: string;
   fromName: string;
   consultationRecipientEmail: string;
   smtpUsername: string;
@@ -20,7 +19,6 @@ interface FormValues {
 
 const emptyValues: FormValues = {
   enabled: false,
-  fromEmail: '',
   fromName: '',
   consultationRecipientEmail: '',
   smtpUsername: '',
@@ -31,20 +29,19 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 function toFormValues(settings: EmailSettingsResponse): FormValues {
   return {
     enabled: settings.enabled,
-    fromEmail: settings.fromEmail,
     fromName: settings.fromName,
     consultationRecipientEmail: settings.consultationRecipientEmail,
-    smtpUsername: settings.smtpUsername ?? '',
+    smtpUsername: settings.smtpUsername || settings.fromEmail,
   };
 }
 
 function isFormDirty(values: FormValues, smtpPassword: string, saved?: EmailSettingsResponse): boolean {
   if (!saved) return false;
-  return values.enabled !== saved.enabled
-    || values.fromEmail !== saved.fromEmail
-    || values.fromName !== saved.fromName
-    || values.consultationRecipientEmail !== saved.consultationRecipientEmail
-    || values.smtpUsername !== saved.smtpUsername
+  const savedValues = toFormValues(saved);
+  return values.enabled !== savedValues.enabled
+    || values.fromName !== savedValues.fromName
+    || values.consultationRecipientEmail !== savedValues.consultationRecipientEmail
+    || values.smtpUsername !== savedValues.smtpUsername
     || Boolean(smtpPassword);
 }
 
@@ -72,7 +69,7 @@ function getSettingsFieldErrors(error: unknown): Record<string, string> {
   const fieldErrors = getApiError(error)?.fieldErrors ?? {};
   const safeErrors: Record<string, string> = {};
 
-  for (const field of ['fromEmail', 'fromName', 'consultationRecipientEmail', 'smtpUsername']) {
+  for (const field of ['fromName', 'consultationRecipientEmail', 'smtpUsername']) {
     if (fieldErrors[field]) safeErrors[field] = fieldErrors[field];
   }
   if (fieldErrors.smtpPassword) safeErrors.smtpPassword = 'Vui lòng kiểm tra lại mật khẩu SMTP.';
@@ -107,7 +104,7 @@ export default function AdminEmailSettings() {
   const errors = { ...serverErrors, ...clientErrors };
   const dirty = isFormDirty(values, smtpPassword, settings);
   const smtpUsernameChanged = Boolean(settings)
-    && values.smtpUsername.trim().toLowerCase() !== (settings?.smtpUsername ?? '').trim().toLowerCase();
+    && values.smtpUsername.trim().toLowerCase() !== (settings?.smtpUsername || settings?.fromEmail || '').trim().toLowerCase();
   const inputClass = 'w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-[#d40000] focus:ring-2 focus:ring-[#d40000]/10 disabled:bg-gray-100 disabled:text-gray-500';
 
   const setField = <K extends keyof FormValues>(field: K, value: FormValues[K]) => {
@@ -135,13 +132,9 @@ export default function AdminEmailSettings() {
     if (!settings) return false;
 
     const next: Record<string, string> = {};
-    const fromEmail = values.fromEmail.trim();
     const fromName = values.fromName.trim();
     const recipientEmail = values.consultationRecipientEmail.trim();
     const smtpUsername = values.smtpUsername.trim();
-
-    if (!fromEmail) next.fromEmail = 'Vui lòng nhập email người gửi.';
-    else if (fromEmail.length > 320 || !emailPattern.test(fromEmail)) next.fromEmail = 'Email người gửi không hợp lệ.';
 
     if (!fromName) next.fromName = 'Vui lòng nhập tên người gửi.';
     else if (fromName.length > 200) next.fromName = 'Tên người gửi không được vượt quá 200 ký tự.';
@@ -167,12 +160,13 @@ export default function AdminEmailSettings() {
     savingRef.current = true;
     setServerErrors({});
     setFormError(undefined);
+    const normalizedSmtpUsername = values.smtpUsername.trim().toLowerCase();
     const payload: EmailSettingsUpdateRequest = {
       enabled: values.enabled,
-      fromEmail: values.fromEmail.trim().toLowerCase(),
+      fromEmail: normalizedSmtpUsername,
       fromName: values.fromName.trim(),
       consultationRecipientEmail: values.consultationRecipientEmail.trim().toLowerCase(),
-      smtpUsername: values.smtpUsername.trim().toLowerCase(),
+      smtpUsername: normalizedSmtpUsername,
       smtpPassword: smtpPassword.trim() ? smtpPassword : null,
     };
 
@@ -294,9 +288,6 @@ export default function AdminEmailSettings() {
         <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
           <h2 className="text-base font-black">Thông tin người gửi và người nhận</h2>
           <div className="mt-5 space-y-5">
-            <Field id="fromEmail" label="Email người gửi" required error={errors.fromEmail}>
-              <input id="fromEmail" type="email" value={values.fromEmail} onChange={(event) => setField('fromEmail', event.target.value)} maxLength={320} disabled={updateSettings.isPending} className={inputClass} placeholder="info@mhconsulting.vn" {...fieldA11y('fromEmail')} />
-            </Field>
             <Field id="fromName" label="Tên người gửi" required error={errors.fromName}>
               <input id="fromName" value={values.fromName} onChange={(event) => setField('fromName', event.target.value)} maxLength={200} disabled={updateSettings.isPending} className={inputClass} placeholder="MH Consulting" {...fieldA11y('fromName')} />
             </Field>
@@ -311,6 +302,12 @@ export default function AdminEmailSettings() {
           <div className="mt-4 space-y-5">
             <Field id="smtpUsername" label="Tài khoản SMTP" required error={errors.smtpUsername} description="Tài khoản được sử dụng để đăng nhập vào máy chủ gửi email.">
               <input id="smtpUsername" type="email" autoComplete="username" value={values.smtpUsername} onChange={(event) => setField('smtpUsername', event.target.value)} maxLength={320} disabled={updateSettings.isPending} className={inputClass} placeholder="admin@gmail.com" {...fieldA11y('smtpUsername')} />
+              <p className="mt-2 text-xs text-gray-500">
+                Email người gửi sẽ là:{' '}
+                <span className="font-semibold text-gray-700">
+                  {values.smtpUsername.trim() || 'Chưa xác định'}
+                </span>
+              </p>
             </Field>
 
             <div className="flex flex-col gap-2 rounded-xl bg-gray-50 p-4 sm:flex-row sm:items-center sm:justify-between">
