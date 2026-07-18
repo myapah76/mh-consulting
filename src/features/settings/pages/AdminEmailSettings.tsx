@@ -94,18 +94,19 @@ export default function AdminEmailSettings() {
   const [testFieldError, setTestFieldError] = useState<string>();
   const [savedNotice, setSavedNotice] = useState(false);
   const savingRef = useRef(false);
+  const settings = settingsQuery.data;
 
   useEffect(() => {
-    if (!settingsQuery.data) return;
-    setValues(toFormValues(settingsQuery.data));
+    if (!settings) return;
+    setValues(toFormValues(settings));
     setSmtpPassword('');
-    setTestRecipient((current) => current || settingsQuery.data.consultationRecipientEmail);
-  }, [settingsQuery.data]);
+    setTestRecipient((current) => current || settings.consultationRecipientEmail);
+  }, [settings]);
 
   const errors = { ...serverErrors, ...clientErrors };
-  const dirty = isFormDirty(values, smtpPassword, settingsQuery.data);
-  const smtpUsernameChanged = Boolean(settingsQuery.data)
-    && values.smtpUsername.trim().toLowerCase() !== (settingsQuery.data.smtpUsername ?? '').trim().toLowerCase();
+  const dirty = isFormDirty(values, smtpPassword, settings);
+  const smtpUsernameChanged = Boolean(settings)
+    && values.smtpUsername.trim().toLowerCase() !== (settings?.smtpUsername ?? '').trim().toLowerCase();
   const inputClass = 'w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-[#d40000] focus:ring-2 focus:ring-[#d40000]/10 disabled:bg-gray-100 disabled:text-gray-500';
 
   const setField = <K extends keyof FormValues>(field: K, value: FormValues[K]) => {
@@ -130,6 +131,8 @@ export default function AdminEmailSettings() {
   });
 
   const validateSettings = (): boolean => {
+    if (!settings) return false;
+
     const next: Record<string, string> = {};
     const fromEmail = values.fromEmail.trim();
     const fromName = values.fromName.trim();
@@ -149,7 +152,7 @@ export default function AdminEmailSettings() {
     else if (smtpUsername.length > 320 || !emailPattern.test(smtpUsername)) next.smtpUsername = 'Tài khoản SMTP không hợp lệ.';
 
     if (smtpPassword.length > 500) next.smtpPassword = 'Mật khẩu SMTP không được vượt quá 500 ký tự.';
-    else if (!smtpPassword.trim() && !settingsQuery.data?.smtpPasswordConfigured) next.smtpPassword = 'Vui lòng nhập mật khẩu SMTP.';
+    else if (!smtpPassword.trim() && !settings.smtpPasswordConfigured) next.smtpPassword = 'Vui lòng nhập mật khẩu SMTP.';
     else if (!smtpPassword.trim() && smtpUsernameChanged) next.smtpPassword = 'Vui lòng nhập lại mật khẩu khi thay đổi tài khoản SMTP.';
 
     setClientErrors(next);
@@ -158,7 +161,7 @@ export default function AdminEmailSettings() {
 
   const submitSettings = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (savingRef.current || updateSettings.isPending || !settingsQuery.data || !validateSettings()) return;
+    if (savingRef.current || updateSettings.isPending || !settings || !validateSettings()) return;
 
     savingRef.current = true;
     setServerErrors({});
@@ -195,8 +198,8 @@ export default function AdminEmailSettings() {
   };
 
   const resetSettings = () => {
-    if (!settingsQuery.data || updateSettings.isPending) return;
-    setValues(toFormValues(settingsQuery.data));
+    if (!settings || updateSettings.isPending) return;
+    setValues(toFormValues(settings));
     setSmtpPassword('');
     setClientErrors({});
     setServerErrors({});
@@ -206,7 +209,7 @@ export default function AdminEmailSettings() {
 
   const submitTestEmail = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (sendTest.isPending || !settingsQuery.data?.providerConfigured || !settingsQuery.data.enabled) return;
+    if (sendTest.isPending || !settings || !settings.providerConfigured || !settings.enabled) return;
 
     const recipientEmail = testRecipient.trim();
     setTestError(undefined);
@@ -230,19 +233,31 @@ export default function AdminEmailSettings() {
     });
   };
 
-  if (settingsQuery.isPending) return <EmailSettingsLoading />;
+  if (settingsQuery.isPending) {
+    return <EmailSettingsLoadingState />;
+  }
 
-  if (settingsQuery.isError || !settingsQuery.data) {
+  if (settingsQuery.isError) {
     return (
-      <div className="mx-auto max-w-3xl rounded-2xl border border-red-200 bg-white px-6 py-16 text-center">
-        <h1 className="text-lg font-black text-gray-900">Không thể tải cấu hình email</h1>
-        <p className="mt-2 text-sm text-red-600">{getVietnameseApiError(settingsQuery.error, 'Vui lòng thử lại sau.')}</p>
-        <button type="button" onClick={() => void settingsQuery.refetch()} className="mt-5 rounded-lg bg-[#d40000] px-4 py-2 text-sm font-bold text-white">Thử lại</button>
-      </div>
+      <EmailSettingsErrorState
+        message={getVietnameseApiError(settingsQuery.error, 'Vui lòng thử lại sau.')}
+        onRetry={() => {
+          void settingsQuery.refetch();
+        }}
+      />
     );
   }
 
-  const settings = settingsQuery.data;
+  if (!settings) {
+    return (
+      <EmailSettingsEmptyState
+        onRetry={() => {
+          void settingsQuery.refetch();
+        }}
+      />
+    );
+  }
+
   const testDisabled = sendTest.isPending || !settings.providerConfigured || !settings.enabled;
 
   return (
@@ -355,12 +370,32 @@ function Field({ id, label, required = false, error, description, children }: { 
   );
 }
 
-function EmailSettingsLoading() {
+function EmailSettingsLoadingState() {
   return (
     <div className="mx-auto max-w-4xl space-y-6" aria-label="Đang tải cấu hình email">
       <div className="h-16 animate-pulse rounded-xl bg-gray-200" />
       <div className="h-36 animate-pulse rounded-2xl border border-gray-200 bg-white" />
       <div className="h-80 animate-pulse rounded-2xl border border-gray-200 bg-white" />
+    </div>
+  );
+}
+
+function EmailSettingsErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
+  return (
+    <div className="mx-auto max-w-4xl rounded-2xl border border-red-200 bg-white px-6 py-16 text-center">
+      <h1 className="text-lg font-black text-gray-900">Không thể tải cấu hình email</h1>
+      <p className="mt-2 text-sm text-red-600">{message}</p>
+      <button type="button" onClick={onRetry} className="mt-5 rounded-lg bg-[#d40000] px-4 py-2 text-sm font-bold text-white">Thử lại</button>
+    </div>
+  );
+}
+
+function EmailSettingsEmptyState({ onRetry }: { onRetry: () => void }) {
+  return (
+    <div className="mx-auto max-w-4xl rounded-2xl border border-amber-200 bg-white px-6 py-16 text-center">
+      <h1 className="text-lg font-black text-gray-900">Không tìm thấy cấu hình email</h1>
+      <p className="mt-2 text-sm text-gray-600">Máy chủ không trả về dữ liệu cấu hình. Vui lòng tải lại.</p>
+      <button type="button" onClick={onRetry} className="mt-5 rounded-lg bg-[#d40000] px-4 py-2 text-sm font-bold text-white">Tải lại</button>
     </div>
   );
 }
