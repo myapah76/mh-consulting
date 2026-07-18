@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { getApiError, getVietnameseApiError } from '../../../utils/apiError';
 import { prepareCsrf } from '../api/authService';
 import { useCurrentAdmin, useLoginAdmin } from '../hooks/useAuth';
@@ -43,6 +43,7 @@ export default function AdminLogin() {
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <label className="block"><span className="mb-2 block text-sm font-bold">Email</span><input type="email" autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} maxLength={320} disabled={login.isPending || checkingSession} className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#d40000] focus:ring-2 focus:ring-[#d40000]/10" />{errors.email && <span className="mt-1 block text-xs font-semibold text-red-600">{errors.email}</span>}</label>
           <label className="block"><span className="mb-2 block text-sm font-bold">Mật khẩu</span><input type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} maxLength={200} disabled={login.isPending || checkingSession} className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-[#d40000] focus:ring-2 focus:ring-[#d40000]/10" />{errors.password && <span className="mt-1 block text-xs font-semibold text-red-600">{errors.password}</span>}</label>
+          <div className="text-right"><Link to="/admin/forgot-password" state={{ email }} className="text-sm font-bold text-[#d40000] hover:text-gray-900 hover:underline">Quên mật khẩu?</Link></div>
           <button type="submit" disabled={login.isPending || checkingSession} className="w-full rounded-lg bg-[#d40000] px-4 py-3 text-sm font-black text-white transition hover:bg-gray-900 disabled:cursor-not-allowed disabled:opacity-60">{login.isPending ? 'Đang đăng nhập...' : 'Đăng nhập'}</button>
         </form>
       </div>

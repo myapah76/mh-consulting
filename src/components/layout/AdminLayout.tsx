@@ -55,6 +55,9 @@ export default function AdminLayout() {
             <NavLink to="/admin/contact-settings" onClick={() => setMenuOpen(false)} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold ${isActive ? 'bg-[#d40000] text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
               <LucideIcon name="Contact" size={18} /> Thông tin liên hệ
             </NavLink>
+            <NavLink to="/admin/email-settings" onClick={() => setMenuOpen(false)} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold ${isActive ? 'bg-[#d40000] text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
+              <LucideIcon name="Mail" size={18} /> Cấu hình email
+            </NavLink>
             <p className="px-4 pb-1 pt-5 text-[10px] font-black uppercase tracking-widest text-gray-400">Quản lý tài khoản</p>
             <NavLink to="/admin/accounts/new" onClick={() => setMenuOpen(false)} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold ${isActive ? 'bg-[#d40000] text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
               <LucideIcon name="UserPlus" size={18} /> Tạo tài khoản quản trị
