@@ -4,6 +4,7 @@ import {
   sendTestEmail,
   updateAdminEmailSettings,
 } from '../api/emailSettingsService';
+import type { EmailSettingsResponse } from '../types/settings.types';
 
 export const adminEmailSettingsKeys = {
   all: ['admin-email-settings'] as const,
@@ -23,8 +24,9 @@ export function useUpdateAdminEmailSettings() {
   return useMutation({
     mutationFn: updateAdminEmailSettings,
     retry: false,
+    gcTime: 0,
     onSuccess: (updated) => {
-      queryClient.setQueryData(adminEmailSettingsKeys.all, updated);
+      queryClient.setQueryData<EmailSettingsResponse>(adminEmailSettingsKeys.all, updated);
       void queryClient.invalidateQueries({ queryKey: adminEmailSettingsKeys.all });
     },
   });

@@ -18,6 +18,8 @@ export interface EmailSettingsResponse {
   consultationRecipientEmail: string;
   deliveryProvider: 'SMTP' | string;
   providerConfigured: boolean;
+  smtpUsername: string;
+  smtpPasswordConfigured: boolean;
 }
 
 export interface EmailSettingsUpdateRequest {
@@ -25,6 +27,8 @@ export interface EmailSettingsUpdateRequest {
   fromEmail: string;
   fromName: string;
   consultationRecipientEmail: string;
+  smtpUsername: string;
+  smtpPassword: string | null;
 }
 
 export interface TestEmailRequest {
