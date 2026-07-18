@@ -28,7 +28,8 @@ import {
   UserPlus,
   KeyRound,
   LogOut,
-  Contact
+  Contact,
+  ExternalLink
 } from 'lucide-react';
 
 const iconMap = {
@@ -61,7 +62,8 @@ const iconMap = {
   UserPlus,
   KeyRound,
   LogOut,
-  Contact
+  Contact,
+  ExternalLink
 };
 
 export type IconName = keyof typeof iconMap;

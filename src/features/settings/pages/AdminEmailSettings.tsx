@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import LucideIcon from '../../../components/common/LucideIcon';
 import PasswordInput from '../../../components/common/PasswordInput';
 import { useToast } from '../../../components/common/ToastProvider';
 import { getApiError, getApiStatus, getVietnameseApiError } from '../../../utils/apiError';
@@ -323,7 +324,20 @@ export default function AdminEmailSettings() {
             <Field id="smtpPassword" label="Mật khẩu ứng dụng SMTP" required={!settings.smtpPasswordConfigured || smtpUsernameChanged} error={errors.smtpPassword} description="Mật khẩu hiện tại không được hiển thị vì lý do bảo mật.">
               <PasswordInput id="smtpPassword" value={smtpPassword} onChange={setPassword} autoComplete="new-password" maxLength={500} disabled={updateSettings.isPending} placeholder={settings.smtpPasswordConfigured ? 'Đã có mật khẩu — để trống nếu không thay đổi' : 'Nhập mật khẩu ứng dụng SMTP'} invalid={Boolean(errors.smtpPassword)} ariaDescribedBy={errors.smtpPassword ? 'smtpPassword-error' : undefined} />
             </Field>
-            <p className="text-xs leading-5 text-gray-600">Sử dụng App Password của Google, không sử dụng mật khẩu đăng nhập Gmail thông thường.</p>
+            <div>
+              <p className="text-sm leading-6 text-gray-600">
+                Với tài khoản Gmail, hãy bật Xác minh 2 bước và tạo Mật khẩu ứng dụng gồm 16 ký tự. Không sử dụng mật khẩu đăng nhập Gmail thông thường.
+              </p>
+              <a
+                href="https://support.google.com/accounts/answer/185833"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-[#d40000] transition-colors hover:underline"
+              >
+                Xem hướng dẫn tạo App Password của Google
+                <LucideIcon name="ExternalLink" size={14} />
+              </a>
+            </div>
             <p className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs font-semibold leading-5 text-amber-900">Không chia sẻ mật khẩu ứng dụng. Hệ thống sẽ mã hóa mật khẩu trước khi lưu và không thể hiển thị lại trên giao diện.</p>
           </div>
         </fieldset>
