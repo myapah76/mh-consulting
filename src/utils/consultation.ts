@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { ConsultationCreateRequest } from '../types';
+import type { ConsultationCreateRequest } from '../features/consultations';
 
 export const CONSULTATION_SUCCESS_MESSAGE =
   'Yêu cầu tư vấn đã được gửi thành công. MH Consulting sẽ liên hệ với bạn trong thời gian sớm nhất.';

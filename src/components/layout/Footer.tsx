@@ -1,8 +1,29 @@
 import { Link } from 'react-router-dom';
 import LucideIcon from '../common/LucideIcon';
 import { footerLinks } from '../../data';
+import { usePublicContactSettings, type ContactSettings } from '../../features/settings';
+
+const DEFAULT_CONTACT_SETTINGS: ContactSettings = {
+  address: '133/15 Đ. Ngô Đức Kế, Phường 12, Quận Bình Thạnh, TP. Hồ Chí Minh',
+  primaryPhone: '0903.024.116',
+  primaryPhoneLabel: 'Ms. Thảo',
+  secondaryPhone: '0938.835.633',
+  secondaryPhoneLabel: 'Mr. Trí',
+  email: 'info@mhconsulting.vn',
+  workingHours: 'Thứ 2 - Thứ 7: 08:00 - 17:30',
+  facebookUrl: null,
+  zaloUrl: 'https://zalo.me/0903024116',
+  youtubeUrl: null,
+};
+
+function toPhoneHref(phone: string): string {
+  return `tel:${phone.replace(/[^\d+]/g, '')}`;
+}
 
 export default function Footer() {
+  const { data } = usePublicContactSettings();
+  const settings = data ?? DEFAULT_CONTACT_SETTINGS;
+
   return (
     <footer className="bg-[#202020] text-gray-300 font-sans border-t border-gray-800">
       {/* Upper Footer: Branding & Grid */}
@@ -29,36 +50,48 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-gray-400">
               <li className="flex items-start gap-2.5">
                 <LucideIcon name="MapPin" className="text-[#d40000] shrink-0 mt-0.5" size={16} />
-                <span>Trụ sở chính: 133/15 Đ. Ngô Đức Kế, Phường 12, Quận Bình Thạnh, TP. Hồ Chí Minh</span>
+                <span className="min-w-0 break-words">Trụ sở chính: {settings.address}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <LucideIcon name="Phone" className="text-[#d40000] shrink-0 mt-0.5" size={16} />
-                <div className="flex flex-col gap-1">
-                  <a href="tel:0903024116" className="hover:text-[#d40000] transition-colors">0903.024.116 (Ms. Thảo)</a>
-                  <a href="tel:0938835633" className="hover:text-[#d40000] transition-colors">0938.835.633 (Mr. Trí)</a>
+                <div className="flex min-w-0 flex-col gap-1">
+                  <a href={toPhoneHref(settings.primaryPhone)} className="break-words hover:text-[#d40000] transition-colors">
+                    {settings.primaryPhone}{settings.primaryPhoneLabel ? ` (${settings.primaryPhoneLabel})` : ''}
+                  </a>
+                  {settings.secondaryPhone && (
+                    <a href={toPhoneHref(settings.secondaryPhone)} className="break-words hover:text-[#d40000] transition-colors">
+                      {settings.secondaryPhone}{settings.secondaryPhoneLabel ? ` (${settings.secondaryPhoneLabel})` : ''}
+                    </a>
+                  )}
                 </div>
               </li>
               <li className="flex items-center gap-2.5">
                 <LucideIcon name="Mail" className="text-[#d40000] shrink-0" size={16} />
-                <a href="mailto:info@mhconsulting.vn" className="hover:text-[#d40000] transition-colors">info@mhconsulting.vn</a>
+                <a href={`mailto:${settings.email}`} className="min-w-0 break-all hover:text-[#d40000] transition-colors">{settings.email}</a>
               </li>
-              <li className="flex items-center gap-2.5">
-                <LucideIcon name="Clock" className="text-[#d40000] shrink-0" size={16} />
-                <span>Thứ 2 - Thứ 7: 08:00 - 17:30</span>
+              <li className="flex items-start gap-2.5">
+                <LucideIcon name="Clock" className="mt-0.5 shrink-0 text-[#d40000]" size={16} />
+                <span className="min-w-0 break-words">{settings.workingHours}</span>
               </li>
             </ul>
 
             {/* Social Icons */}
             <div className="flex items-center gap-3">
-              <a href="#" className="h-8 w-8 bg-gray-800 hover:bg-[#d40000] text-white rounded-full flex items-center justify-center transition-colors" aria-label="Facebook">
-                <span className="font-bold text-xs">FB</span>
-              </a>
-              <a href="https://zalo.me/0903024116" target="_blank" rel="noopener noreferrer" className="h-8 w-8 bg-gray-800 hover:bg-[#0068ff] text-white rounded-full flex items-center justify-center font-bold text-xs transition-colors" aria-label="Zalo">
-                ZL
-              </a>
-              <a href="#" className="h-8 w-8 bg-gray-800 hover:bg-[#d40000] text-white rounded-full flex items-center justify-center transition-colors" aria-label="Youtube">
-                <span className="font-bold text-xs">YT</span>
-              </a>
+              {settings.facebookUrl && (
+                <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="h-8 w-8 bg-gray-800 hover:bg-[#d40000] text-white rounded-full flex items-center justify-center transition-colors" aria-label="Mở trang Facebook của MH Consulting">
+                  <span className="font-bold text-xs">FB</span>
+                </a>
+              )}
+              {settings.zaloUrl && (
+                <a href={settings.zaloUrl} target="_blank" rel="noopener noreferrer" className="h-8 w-8 bg-gray-800 hover:bg-[#0068ff] text-white rounded-full flex items-center justify-center font-bold text-xs transition-colors" aria-label="Mở trang Zalo của MH Consulting">
+                  ZL
+                </a>
+              )}
+              {settings.youtubeUrl && (
+                <a href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer" className="h-8 w-8 bg-gray-800 hover:bg-[#d40000] text-white rounded-full flex items-center justify-center transition-colors" aria-label="Mở kênh YouTube của MH Consulting">
+                  <span className="font-bold text-xs">YT</span>
+                </a>
+              )}
             </div>
           </div>
 

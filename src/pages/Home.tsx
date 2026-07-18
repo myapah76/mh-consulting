@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import LucideIcon from '../components/common/LucideIcon';
-import ConsultationForm from '../components/consultation/ConsultationForm';
-import TestimonialCarousel from '../components/home/TestimonialCarousel';
-import KnowledgeCarousel from '../components/home/KnowledgeCarousel';
+import { ConsultationForm } from '../features/consultations';
+import KnowledgeCarousel from '../features/news/components/KnowledgeCarousel';
+import TestimonialCarousel from './components/TestimonialCarousel';
 
 interface HomeProps {
   onOpenConsultation: () => void;
